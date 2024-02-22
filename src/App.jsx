@@ -1,16 +1,14 @@
 import './App.css';
 import { createRoot } from 'react-dom/client';
-import Timer from './components/Timer/Timer';
 import Scene from './components/Scene/Scene';
 import { Canvas } from '@react-three/fiber';
-import Form from "./components/questions/Form";
+import Quizz from './components/Quizz/Quizz';
 
 export default function App() {
 
   return (
     <>
-        <Timer />
-        <Form />
+        <Quizz />
         <Canvas className='canvas-container' camera={{ fov: 40, position: [0, 0, 10]}}>
             <Scene />
         </Canvas>

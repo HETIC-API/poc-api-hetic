@@ -1,13 +1,62 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import "../Timer/Timer.scss";
 
-export default function Question(questionProp) {
+export default function Question({ questionProp }) {
   const [display, setDisplay] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [isResponseCorrect, setIsResponseCorrect] = useState(null);
   const [answer, setAnswer] = useState({});
+  const [time, setTime] = useState(120000);
+  const [timerOn, setTimerOn] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (timerOn) {
+      interval = setInterval(() => {
+        setTime((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 10;
+          } else {
+            clearInterval(interval);
+            return 0;
+          }
+        });
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [timerOn]);
+
+  const formatTime = () => {
+    const minutes = formatNumber(Math.floor(calcMinutes(time)));
+    const seconds = formatNumber(Math.floor(calcSeconds(time)));
+    const milliseconds = formatNumber(Math.floor(calcMilliseconds(time)));
+
+    return `${minutes}:${seconds}:${milliseconds}`;
+  };
+
+  const calcMinutes = (time) => {
+    return (time / 60000) % 60;
+  };
+
+  const calcSeconds = (time) => {
+    return (time / 1000) % 60;
+  };
+
+  const calcMilliseconds = (time) => {
+    return (time % 1000) / 10;
+  };
+
+  const formatNumber = (value) => {
+    return value.toString().padStart(2, "0");
+  };
 
   function handleDisplay() {
     setDisplay(true);
+    setTimerOn(true);
     checkResponse();
     console.log(questionProp.question);
   }
@@ -33,6 +82,8 @@ export default function Question(questionProp) {
       setIsResponseCorrect(false);
     }
     setDisplay("validate");
+    setTime(120000);
+    setTimerOn(false);
   }
 
   function handleChange(event) {
@@ -56,8 +107,17 @@ export default function Question(questionProp) {
     }
   }
 
+  useEffect(() => {
+    if (timerOn && time === 0) {
+      setTimerOn(false);
+    }
+  }, [timerOn, setTimerOn, time]);
+
   return (
     <div>
+      <div className="timer__container">
+        <div>{formatTime()}</div>
+      </div>
       {display == true ? (
         <div>
           <h3>{questionProp.question.question}</h3>
