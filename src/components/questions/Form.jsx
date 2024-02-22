@@ -1,19 +1,15 @@
 import Question from "./Question";
 
-const questionTest = {
-  question: "lorem ipsum",
-  answers: { a: "vgbhjn,kl", b: "nj,k" },
-  response: "a", //object.key == object.value for ( in )
-};
+export default function Form({ timerOn, setTimerOn }) {
+    const questionTest = {
+        question: "lorem ipsum",
+        answers: { a: "vgbhjn,kl", b: "nj,k" },
+        response: "a",
+    };
 
-export default function form() {
-  return (
-    <div>
-      <Question question={questionTest} />
-      <Question question={questionTest} />
-      <Question question={questionTest} />
-      <Question question={questionTest} />
-      <Question question={questionTest} />
-    </div>
-  );
+    return (
+        <div>
+            <Question questionProp={questionTest} timerOn={timerOn} setTimerOn={setTimerOn} />
+        </div>
+    );
 }
