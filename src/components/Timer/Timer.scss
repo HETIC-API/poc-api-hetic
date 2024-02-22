@@ -1,0 +1,19 @@
+.timer {
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        max-width: 100px;
+        padding: 0.6em 1.2em;
+        margin: 0.6em 1.2em;
+        font-size: 1em;
+        font-weight: 500;
+        font-family: inherit;
+        background-color: rgba(0, 0, 0, 0.761);
+        transition: border-color 0.25s;
+        z-index: 10;
+    }
+}
