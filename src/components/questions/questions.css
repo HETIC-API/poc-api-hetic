@@ -1,0 +1,12 @@
+ul,
+li {
+  list-style-type: none;
+  text-align: left;
+}
+#questionContainer {
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}

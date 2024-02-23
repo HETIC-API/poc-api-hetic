@@ -1,21 +1,33 @@
-import { useState } from "react";
-
-export default function Question(questionProp) {
+import { useState, useEffect } from "react";
+import "./questions.css";
+export default function Question({
+  questionProp,
+  index,
+  currentIndex,
+  onNext,
+  onAnswer,
+}) {
   const [display, setDisplay] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
-  const [isResponseCorrect, setIsResponseCorrect] = useState(null);
+  const [isResponseCorrect, setIsResponseCorrect] = useState("");
   const [answer, setAnswer] = useState({});
+  const [questionIndex, setQuestionIndex] = useState(0);
+
+  useEffect(() => {
+    setQuestionIndex(currentIndex + 1);
+    if (display) {
+      checkResponse();
+    }
+  }, [currentIndex, display]);
 
   function handleDisplay() {
     setDisplay(true);
-    checkResponse();
-    console.log(questionProp.question);
   }
 
   function checkResponse() {
     const newAnswer = {};
-    for (const value in questionProp.question.answers) {
-      if (value == questionProp.question.response) {
+    for (const value in questionProp.answers) {
+      if (value === questionProp.response) {
         newAnswer[value] = true;
       } else {
         newAnswer[value] = false;
@@ -26,13 +38,22 @@ export default function Question(questionProp) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(answer);
-    if (answer[selectedAnswer] == true) {
-      setIsResponseCorrect(true);
+    if (answer[selectedAnswer] === true) {
+      setIsResponseCorrect("Bonne réponse");
+      onAnswer(true);
     } else {
-      setIsResponseCorrect(false);
+      setIsResponseCorrect("Mauvaise réponse");
+      onAnswer(false);
     }
+    setSelectedAnswer(null);
     setDisplay("validate");
+  }
+
+  function handleNextQuestion() {
+    onNext();
+    setSelectedAnswer("");
+    setIsResponseCorrect("");
+    setDisplay(true);
   }
 
   function handleChange(event) {
@@ -40,48 +61,57 @@ export default function Question(questionProp) {
   }
 
   const answersList = [];
-  for (const key in questionProp.question.answers) {
-    if (Object.hasOwnProperty.call(questionProp.question.answers, key)) {
+  for (const key in questionProp.answers) {
+    if (Object.hasOwnProperty.call(questionProp.answers, key)) {
       answersList.push(
-        <label key={key}>
-          <input
-            type="radio"
-            name="answer"
-            value={key}
-            onChange={handleChange}
-          />
-          {questionProp.question.answers[key]}
-        </label>
+        <li>
+          <label key={key}>
+            <input
+              type="radio"
+              name="answer"
+              value={key}
+              checked={selectedAnswer === key}
+              onChange={handleChange}
+            />
+            {questionProp.answers[key]}
+          </label>
+        </li>
       );
     }
   }
 
   return (
     <div>
-      {display == true ? (
-        <div>
-          <h3>{questionProp.question.question}</h3>
-          <form onSubmit={handleSubmit}>
-            {answersList}
-            <button type="sumbit">Valider</button>
-          </form>
-
-          {isResponseCorrect === null ? (
-            <p>EN ATTENTE DE REPONSE</p>
-          ) : isResponseCorrect === true ? (
-            <p>VRAI</p>
+      {currentIndex === index && (
+        <>
+          {display === true ? (
+            <div id="questionContainer">
+              <h3>
+                Question {questionIndex}: {questionProp.question}
+              </h3>
+              <form onSubmit={handleSubmit}>
+                <ul>{answersList}</ul>
+                <button type="submit">Valider</button>
+              </form>
+              {isResponseCorrect && (
+                <button onClick={handleNextQuestion}>Suivant</button>
+              )}
+            </div>
+          ) : display === "validate" ? (
+            <div>
+              <p>Validé : {isResponseCorrect}</p>
+              {isResponseCorrect && (
+                <button onClick={handleNextQuestion}>Suivant</button>
+              )}
+            </div>
           ) : (
-            <p>FAUX</p>
+            <>
+              {!isResponseCorrect && (
+                <button onClick={handleDisplay}>Commencer</button>
+              )}
+            </>
           )}
-        </div>
-      ) : display == "validate" ? (
-        <div>
-          <p>Validé</p>
-        </div>
-      ) : (
-        <div>
-          <button onClick={handleDisplay}>Commencer</button>
-        </div>
+        </>
       )}
     </div>
   );
