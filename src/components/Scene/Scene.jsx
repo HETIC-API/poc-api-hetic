@@ -1,16 +1,16 @@
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { useAnimations, useGLTF } from "@react-three/drei";
+import {
+  PresentationControls,
+  useAnimations,
+  useGLTF,
+} from "@react-three/drei";
 import gsap from "gsap";
-
-extend({ OrbitControls });
 
 export default function Scene() {
   const cloudGroup = useGLTF("./groupclouds.glb");
   const phoenix = useGLTF("./phoenix.glb");
 
-  const { camera, gl } = useThree();
   const controls = useRef();
   const phoenixAnimations = useAnimations(phoenix.animations, phoenix.scene);
   const cloudGroupAnimations = useAnimations(
@@ -45,17 +45,13 @@ export default function Scene() {
       x: newPosition[0],
       y: newPosition[1],
       duration: 10,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
   useEffect(() => {
     const intervalId = setInterval(updatePhoenixPosition, 1500);
     return () => clearInterval(intervalId);
-  });
-
-  useFrame(() => {
-    controls.current.update();
   });
 
   const getRandomPosition = () => {
@@ -75,21 +71,28 @@ export default function Scene() {
 
   return (
     <>
-      <directionalLight color="white" intensity={2} position={[0, 0, 2]} />
-      <ambientLight intensity={1} />
-      <orbitControls ref={controls} args={[camera, gl.domElement]} />
+      <PresentationControls
+        global
+        polar={[0, 0.2]}
+        azimuth={[-0.75, 0.25]}
+        config={{ mass: 2, tension: 200 }}
+        snap={{ mass: 1, tension: 50 }}
+      >
+        <directionalLight color="white" intensity={2} position={[0, 0, 2]} />
+        <ambientLight intensity={1} />
 
-      <primitive
-        object={cloudGroup.scene}
-        position={[1, 2, -2.25]}
-        rotation={[0.35, 0, 0]}
-        scale={0.375}
-      />
-      <primitive
-        object={phoenix.scene}
-        position={getRandomPosition()}
-        scale={0.0035}
-      />
+        <primitive
+          object={cloudGroup.scene}
+          position={[1, 2, -2.25]}
+          rotation={[0.35, 0, 0]}
+          scale={0.375}
+        />
+        <primitive
+          object={phoenix.scene}
+          position={getRandomPosition()}
+          scale={0.0035}
+        />
+      </PresentationControls>
     </>
   );
 }

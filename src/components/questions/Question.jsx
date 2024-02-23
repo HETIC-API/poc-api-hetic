@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./questions.css";
+import "./Timer.scss";
+
 export default function Question({
   questionProp,
   index,
@@ -12,30 +14,44 @@ export default function Question({
   const [isResponseCorrect, setIsResponseCorrect] = useState("");
   const [answer, setAnswer] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [time, setTime] = useState(120000);
+  const [timerOn, setTimerOn] = useState(false);
 
   useEffect(() => {
     setQuestionIndex(currentIndex + 1);
     if (display) {
-      checkResponse();
+      setTimerOn(true);
     }
   }, [currentIndex, display]);
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState !== "visible") {
-        setIsResponseCorrect("Mauvaise réponse : Pourquoi tu quittes la page?");
-        onAnswer(false);
-      }
-      setSelectedAnswer(null);
+    let interval;
+    if (timerOn) {
+      interval = setInterval(() => {
+        setTime((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 10;
+          } else {
+            clearInterval(interval);
+            return 0;
+          }
+        });
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [timerOn]);
+
+  useEffect(() => {
+    if (timerOn && time === 0) {
+      setTimerOn(false);
+      setIsResponseCorrect("Temps écoulé : Répondez plus rapidement !");
+      onAnswer(false);
       setDisplay("validate");
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+    }
+  }, [timerOn, time]);
 
   function handleDisplay() {
     setDisplay(true);
@@ -64,6 +80,7 @@ export default function Question({
     }
     setSelectedAnswer(null);
     setDisplay("validate");
+    setTimerOn(false);
   }
 
   function handleNextQuestion() {
@@ -71,18 +88,43 @@ export default function Question({
     setSelectedAnswer("");
     setIsResponseCorrect("");
     setDisplay(true);
+    setTime(120000);
   }
 
   function handleChange(event) {
     setSelectedAnswer(event.target.value);
   }
 
+  const formatTime = () => {
+    const minutes = formatNumber(Math.floor(calcMinutes(time)));
+    const seconds = formatNumber(Math.floor(calcSeconds(time)));
+    const milliseconds = formatNumber(Math.floor(calcMilliseconds(time)));
+
+    return `${minutes}:${seconds}:${milliseconds}`;
+  };
+
+  const calcMinutes = (time) => {
+    return (time / 60000) % 60;
+  };
+
+  const calcSeconds = (time) => {
+    return (time / 1000) % 60;
+  };
+
+  const calcMilliseconds = (time) => {
+    return (time % 1000) / 10;
+  };
+
+  const formatNumber = (value) => {
+    return value.toString().padStart(2, '0');
+  };
+
   const answersList = [];
   for (const key in questionProp.answers) {
     if (Object.hasOwnProperty.call(questionProp.answers, key)) {
       answersList.push(
-        <li>
-          <label key={key}>
+        <li key={key}>
+          <label>
             <input
               type="radio"
               name="answer"
@@ -99,6 +141,9 @@ export default function Question({
 
   return (
     <div>
+              <div className="timer__container">
+                <p>Temps : {formatTime()}</p>
+              </div>
       {currentIndex === index && (
         <>
           {display === true ? (

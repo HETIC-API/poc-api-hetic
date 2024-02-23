@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Question from "./Question";
+import './Timer.scss'
 
 const questionsArray = [
   {
@@ -98,11 +99,6 @@ export default function Form() {
 
   return (
     <div>
-      <p>
-        Durant la réalisation du questionnaire, veille bien à ne pas utiliser
-        d'aide externe, reste sur cette page le temps de la réalisation, tu
-        pourrais être surpris dans le cas contraire...
-      </p>
       {isLastQuestion ? (
         <div>
           <h2>
@@ -118,6 +114,11 @@ export default function Form() {
           onAnswer={handleAnswer}
         />
       )}
+      <p className="fyi__content">
+        Durant la réalisation du questionnaire, veille bien à ne pas utiliser
+        d'aide externe, reste sur cette page le temps de la réalisation, tu
+        pourrais être surpris dans le cas contraire...
+      </p>
     </div>
   );
 }

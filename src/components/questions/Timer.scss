@@ -1,5 +1,4 @@
 .timer {
-
     &__container {
         display: flex;
         flex-direction: column;
@@ -15,5 +14,16 @@
         background-color: rgba(0, 0, 0, 0.761);
         transition: border-color 0.25s;
         z-index: 10;
+    }
+}
+
+.fyi {
+    &__content {
+        display: flex;
+        justify-content: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
     }
 }
