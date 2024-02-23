@@ -52,7 +52,23 @@ export default function Question({
       setDisplay("validate");
     }
   }, [timerOn, time]);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        setIsResponseCorrect("Mauvaise réponse, pourquoi tu quittes la page?");
+        onAnswer(false);
+      }
+      setSelectedAnswer(null);
+      setDisplay("validate");
+      setTimerOn(false);
+    };
 
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
   function handleDisplay() {
     setDisplay(true);
   }
@@ -116,7 +132,7 @@ export default function Question({
   };
 
   const formatNumber = (value) => {
-    return value.toString().padStart(2, '0');
+    return value.toString().padStart(2, "0");
   };
 
   const answersList = [];
@@ -141,9 +157,9 @@ export default function Question({
 
   return (
     <div>
-              <div className="timer__container">
-                <p>Temps : {formatTime()}</p>
-              </div>
+      <div className="timer__container">
+        <p>Temps : {formatTime()}</p>
+      </div>
       {currentIndex === index && (
         <>
           {display === true ? (
