@@ -47,6 +47,16 @@ export default function Scene() {
       duration: 10,
       ease: "power2.out",
     });
+
+    // Update rotation
+    const newRotation = getRandomRotation();
+    gsap.to(phoenix.scene.rotation, {
+      x: newRotation[0],
+      y: newRotation[1],
+      z: newRotation[2],
+      duration: 10,
+      ease: "power2.out",
+    });
   };
 
   useEffect(() => {
@@ -69,6 +79,17 @@ export default function Scene() {
     return [randomX, randomY, randomZ];
   };
 
+  const getRandomRotation = () => {
+    const maxRotationX = Math.PI * 0.6;
+    const randomRotationX = Math.random() * maxRotationX;
+
+    return [randomRotationX, 0, 0];
+  };
+
+  useFrame(() => {
+    console.log("Phoenix rotation:", phoenix.scene.rotation);
+  });
+
   return (
     <>
       <PresentationControls
@@ -90,6 +111,7 @@ export default function Scene() {
         <primitive
           object={phoenix.scene}
           position={getRandomPosition()}
+          rotation={getRandomRotation()}
           scale={0.0035}
         />
       </PresentationControls>

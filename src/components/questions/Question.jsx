@@ -152,7 +152,9 @@ export default function Question({
                 Question {questionIndex}: {questionProp.question}
               </h3>
               <form onSubmit={handleSubmit}>
-                <ul>{answersList}</ul>
+                <div class="checkbox-wrapper-13">
+                  <ul>{answersList}</ul>
+                </div>
                 <button type="submit">Valider</button>
               </form>
               {isResponseCorrect && (
