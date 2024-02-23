@@ -80,15 +80,15 @@ export default function Scene() {
   };
 
   const getRandomRotation = () => {
-    const maxRotationX = Math.PI * 0.6;
+    const maxRotationX = Math.PI * 0.6 ;
     const randomRotationX = Math.random() * maxRotationX;
 
     return [randomRotationX, 0, 0];
   };
 
-  useFrame(() => {
-    console.log("Phoenix rotation:", phoenix.scene.rotation);
-  });
+  // useFrame(() => {
+  //   console.log("Phoenix rotation:", phoenix.scene.rotation);
+  // });
 
   return (
     <>

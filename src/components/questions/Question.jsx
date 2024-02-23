@@ -55,7 +55,7 @@ export default function Question({
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState !== "visible") {
-        setIsResponseCorrect("Mauvaise réponse, pourquoi tu quittes la page?");
+        setIsResponseCorrect("Pourquoi tu quittes la page? 0 points dommage.");
         onAnswer(false);
       }
       setSelectedAnswer(null);
