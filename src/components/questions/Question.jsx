@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Question(questionProp) {
   const [display, setDisplay] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
-  const [isResponseCorrect, setIsResponseCorrect] = useState(null);
+  const [isResponseCorrect, setIsResponseCorrect] = useState("");
   const [answer, setAnswer] = useState({});
 
   function handleDisplay() {
@@ -24,13 +24,29 @@ export default function Question(questionProp) {
     setAnswer(newAnswer);
   }
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        console.log("tricheur");
+        setDisplay("validate");
+        setIsResponseCorrect("Changement d'onglet détecté, mauvaise réponse");
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   function handleSubmit(event) {
     event.preventDefault();
     console.log(answer);
     if (answer[selectedAnswer] == true) {
-      setIsResponseCorrect(true);
+      setIsResponseCorrect("Bonne réponse");
     } else {
-      setIsResponseCorrect(false);
+      setIsResponseCorrect("Mauvaise réponse");
     }
     setDisplay("validate");
   }
@@ -65,18 +81,11 @@ export default function Question(questionProp) {
             {answersList}
             <button type="sumbit">Valider</button>
           </form>
-
-          {isResponseCorrect === null ? (
-            <p>EN ATTENTE DE REPONSE</p>
-          ) : isResponseCorrect === true ? (
-            <p>VRAI</p>
-          ) : (
-            <p>FAUX</p>
-          )}
+          <p>{isResponseCorrect}</p>
         </div>
       ) : display == "validate" ? (
         <div>
-          <p>Validé</p>
+          <p>Validé : {isResponseCorrect}</p>
         </div>
       ) : (
         <div>
