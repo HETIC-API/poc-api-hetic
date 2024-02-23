@@ -20,6 +20,23 @@ export default function Question({
     }
   }, [currentIndex, display]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        setIsResponseCorrect("Mauvaise réponse : Pourquoi tu quittes la page?");
+        onAnswer(false);
+      }
+      setSelectedAnswer(null);
+      setDisplay("validate");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   function handleDisplay() {
     setDisplay(true);
   }
